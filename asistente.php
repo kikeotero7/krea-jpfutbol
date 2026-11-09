@@ -17,6 +17,12 @@ if ($origen !== '') { header('Access-Control-Allow-Origin: ' . $origen); header(
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { header('Access-Control-Allow-Methods: POST'); header('Access-Control-Allow-Headers: Content-Type'); header('Access-Control-Max-Age: 86400'); http_response_code(204); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') salir(['ok' => false, 'error' => 'metodo'], 405);
 
+/* Modo básico (9-11-2026, Kike): el asistente de la web y de la app responde con las respuestas preparadas de JP Fútbol,
+   sin ninguna IA de pago ni consumo de tokens. Si más adelante JP Fútbol contrata el asistente avanzado (con su factura),
+   se pone a true y se conecta una clave. Mientras sea false, aquí no se llama a ningún servicio externo ni se guarda nada. */
+const JP_IA_DE_PAGO = false;
+if (!JP_IA_DE_PAGO) salir(['ok' => false, 'error' => 'sin_clave']);
+
 /* Clave: variable de entorno o archivo fuera de la carpeta pública */
 $clave = getenv('ANTHROPIC_API_KEY') ?: '';
 $archivoClave = dirname(__DIR__) . '/jpfutbol-ia-clave.txt';
