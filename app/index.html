@@ -1484,7 +1484,7 @@ function drawHelp(auto){const fam=S.role==='familia',p=fam?P(S.kid):null,hb=$('#
     hb.innerHTML=`<div class="hlog" id="hlog" aria-live="polite">${HLOG.map(m=>`<div class="bub ${m.me?'me':''}">${m.html}${hActs(m.acts)}</div>`).join('')}</div>
     <div class="hops">${(fam?HQF:HQM).map(q=>`<button type="button" class="chip" data-hq="${q}">${q}</button>`).join('')}</div>
     <form class="hform" id="hf"><input id="hq" placeholder="Escribe tu duda" autocomplete="off" aria-label="Escribe tu duda" maxlength="200"><button class="btn oro" aria-label="Enviar">${I('send',18)}</button></form>
-    <p class="hnote">Asistente con inteligencia artificial de JP Fútbol. No escribas nombres ni datos de salud. Si no sabe la respuesta, te pasa con el míster o con el club.</p>`;
+    <p class="hnote">Asistente de ayuda de JP Fútbol: responde al momento y no sale de tu móvil. No escribas nombres ni datos de salud. Si no sabe la respuesta, te pasa con el míster o con el club.</p>`;
     $('#hf').onsubmit=e=>{e.preventDefault();const v=$('#hq').value.trim();if(v)hAsk(v,true);};const l=$('#hlog');l.scrollTop=l.scrollHeight;return;}
   if(HT==='contacto'){const mi=p?GROUPS[p.group].mister:'';
     hb.innerHTML=`<div class="ccl"><a class="cct wa" href="${waL(fam?`Hola JP Fútbol 👋 Soy de la familia de ${p.name}. `:'Hola 👋 ')}" target="_blank" rel="noopener"><span>${I('chat',22)}</span><div><b>WhatsApp del club</b><small>${CLUB.telTxt} · os contestan lo antes posible</small></div></a>
@@ -1511,6 +1511,8 @@ function drawHelp(auto){const fam=S.role==='familia',p=fam?P(S.kid):null,hb=$('#
   if(keep){$('#hmi').value=keep.v;if(keep.f)$('#hmi').focus();}}
 /* Asistente con IA: lo escrito se responde con la IA y, si no hay conexión, con las respuestas de la app.
    Solo se envían la pregunta y los datos del grupo, nunca el nombre ni datos de salud del jugador o jugadora. */
+/* Modo básico sin coste (9-11-2026, Kike): AI_ON=false → todo se responde con las respuestas de la app (hAnswer), sin IA de pago ni tokens. */
+const AI_ON=false;
 const AI_API='https://jpfutbolweb.kreadigitalstudio.es/asistente.php';
 const AI_GO={hoy:'Ir a Hoy',sesiones:'Ir a Sesiones',jugadores:'Ir a Jugadores',pruebas:'Ir a Pruebas',pagos:'Ir a Pagos',biblioteca:'Abrir biblioteca',videoteca:'Ver los vídeos',cuadrante:'Abrir cuadrante',carga:'Ver Carga y RPE',inicio:'Ir a Inicio',progreso:'Ver Progreso',pack:'Ver Mi pack',tareas:'Tareas y vídeos'};
 function aiCtx(){if(S.role!=='familia')return '';const p=P(S.kid),g=GROUPS[p.group],L=packSessions(p);return `Grupo ${g.name}. Pack ${p.pack}. Míster ${g.mister}. Entrena: ${L.map(x=>{const m=metaFor(x.k,x.dn);return `${x.dn} de ${m.s} a ${m.e}`;}).join(', ')}.`;}
@@ -1519,7 +1521,7 @@ async function aiAsk(){const fam=S.role==='familia',messages=HLOG.filter(m=>!m.w
   try{const r=await fetch(AI_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,perfil:fam?'familia':'mister',ctx:aiCtx()}),signal:c.signal}),j=await r.json();if(!j||!j.ok||!j.reply)throw 0;
     let t=j.reply,acts=[];const go=t.match(/(?:^|\n)\s*IR:\s*([a-z]+)\s*$/i);if(go){t=t.slice(0,go.index);const k=go[1].toLowerCase();if(k==='mensajes')acts=[[fam?'Escribir al míster':'Abrir mensajes','tab','chat']];else if(AI_GO[k])acts=[[AI_GO[k],'go',k]];}
     return {html:esc(t.trim()).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n+/g,'<br>'),acts};}finally{clearTimeout(to);}}
-function hAsk(q,typed){HLOG.push({me:true,html:esc(q)});if(!typed){HLOG.push(hAnswer(q));drawHelp();return;}
+function hAsk(q,typed){HLOG.push({me:true,html:esc(q)});if(!typed||!AI_ON){HLOG.push(hAnswer(q));drawHelp();return;}
   const r={html:'<span class="hdots" role="status" aria-label="Escribiendo"><i></i><i></i><i></i></span>',wait:true};HLOG.push(r);drawHelp();$('#hq').focus();
   aiAsk().then(x=>Object.assign(r,x)).catch(()=>Object.assign(r,hAnswer(q))).finally(()=>{delete r.wait;const i=$('#hq'),k=i?{v:i.value,f:document.activeElement===i}:null;drawHelp();const n=$('#hq');if(n&&k){n.value=k.v;if(k.f)n.focus();}});}
 function hSend(t){t=String(t||'').trim();if(!t)return;const fam=S.role==='familia',id=fam?S.kid:HCV;if(!id)return;const m={f:fam?'fam':'mis',by:fam?'':S.me,t,at:new Date().toISOString(),r:false},ok=fam?'Mensaje enviado al míster':'Respuesta enviada a la familia';

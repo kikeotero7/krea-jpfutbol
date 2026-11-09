@@ -919,7 +919,7 @@ html.locked #gate{display:flex}
     <section id="lg-privacidad"><h4>Política de privacidad</h4>
       <p><b>Responsable:</b> JP Fútbol ([NOMBRE FISCAL DE JP FÚTBOL], [NIF DE JP FÚTBOL]), jpacademytecnificacion@gmail.com.</p>
       <p><b>Reservas:</b> el formulario de reserva no guarda nada en la web. Al enviarlo se abre WhatsApp con el mensaje escrito (nombre, edad y posición del jugador o jugadora, nombre de la madre, padre o tutor, pack y días) y eres tú quien decide enviarlo. Usamos esos datos solo para responder y organizar la plaza.</p>
-      <p><b>Asistente:</b> para responder, las preguntas que escribes en el asistente se envían a un servicio de inteligencia artificial de Anthropic, que solo las procesa para devolver la respuesta. Guardamos la última pregunta de cada conversación, sin tu IP ni datos personales, para saber qué dudas son más frecuentes. No escribas datos sensibles ni de salud.</p>
+      <p><b>Asistente:</b> responde al momento con las respuestas preparadas por JP Fútbol, en tu propio navegador. Lo que escribes no se envía a ningún servicio externo ni se guarda. Si no tiene la respuesta, te ofrece hablar con el equipo por WhatsApp. No escribas datos sensibles ni de salud.</p>
       <p><b>Menores:</b> los datos de jugadores y jugadoras menores de 14 años nos los debe facilitar su madre, padre o tutor.</p>
       <p><b>Quién nos ayuda:</b> OVHcloud (alojamiento de la web, Francia), WhatsApp (mensajería, si decides enviarnos la reserva) y Anthropic (asistente con IA).</p>
       <p><b>Tus derechos:</b> acceder, corregir, borrar, oponerte, limitar o llevarte tus datos escribiendo a jpacademytecnificacion@gmail.com. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p></section>
@@ -1194,7 +1194,7 @@ function recommend(){
 <script>
 /* Asistente JP Fútbol: preguntas rápidas, respuestas de la academia (sin conexión) y, si hay clave, IA vía asistente.php */
 (function(){
-  var WA='34609712137',btn=document.getElementById('jpbBtn'),win=document.getElementById('jpb'),body=document.getElementById('jpbBody'),opts=document.getElementById('jpbOpts'),tip=document.getElementById('jpbTip'),started=false,hist=[],ia=true;
+  var WA='34609712137',btn=document.getElementById('jpbBtn'),win=document.getElementById('jpb'),body=document.getElementById('jpbBody'),opts=document.getElementById('jpbOpts'),tip=document.getElementById('jpbTip'),started=false,hist=[],ia=false; /* modo básico sin coste: respuestas preparadas (asistente.php, JP_IA_DE_PAGO) */
   function wa(t){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(t)}
   function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}
   function add(cls,html){var d=document.createElement('div');d.className='jpb-m '+cls;d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;return d}
