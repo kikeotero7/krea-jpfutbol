@@ -80,7 +80,8 @@ section{position:relative}
 .burger{display:none;width:46px;height:46px;border-radius:12px;border:1px solid var(--linea);align-items:center;justify-content:center}
 @media (max-width:980px){.nav{display:none}.burger{display:flex}}
 .thm,.burger{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 16%,transparent);color:var(--cal)}.thm svg,.burger svg{width:22px;height:22px;stroke-width:2.2}
-.menu::before{content:"";position:fixed;inset:-24px;z-index:-2;background:url(assets/img/jp-misters-team-cover-v4.webp) center 30%/cover;filter:blur(5px) saturate(.9);opacity:.7;pointer-events:none}.menu::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,5,5,.55) 0%,rgba(5,5,5,.78) 55%,rgba(5,5,5,.92) 100%);pointer-events:none}
+.menu::before{content:"";position:fixed;inset:-24px;z-index:-2;background:url(assets/img/jp-misters-team-cover-v4.webp) center 30%/cover;filter:blur(4px) saturate(.95);opacity:.9;pointer-events:none}.menu::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,5,5,.5) 0%,rgba(5,5,5,.68) 50%,rgba(5,5,5,.88) 100%);pointer-events:none}
+.mlogo{display:block;width:84px;height:84px;margin:auto auto 0;padding-top:0;object-fit:cover;border-radius:50%;box-shadow:0 0 0 2px rgba(226,183,70,.6),0 14px 36px rgba(0,0,0,.6)}
 .menu{position:fixed;inset:0;z-index:60;isolation:isolate;overflow-y:auto;background:var(--noche);display:flex;flex-direction:column;padding:96px 24px 40px;gap:6px;opacity:0;pointer-events:none;transition:opacity .25s}
 .menu.open{opacity:1;pointer-events:auto}
 .menu a{font-family:var(--f-disp);font-size:clamp(24px,7vw,30px);letter-spacing:.02em;text-transform:uppercase;text-decoration:none;padding:6px 0;border-bottom:1px solid var(--linea)}
@@ -542,7 +543,9 @@ html.locked #gate{display:flex}
   <a href="#misters">Místers</a>
   <a href="#app">Área familias</a>
   <a href="#sede">Valdezorras</a>
+  <a href="#packs" data-paymenu>Pago online</a>
   <a class="btn btn-oro" href="#packs">Reservar plaza</a>
+  <img class="mlogo" src="assets/img/jp-logo.webp" alt="" width="84" height="84" loading="lazy">
 </div>
 
 <main>
@@ -1125,6 +1128,7 @@ const payOpen=p=>{const tri=period==='t',pr=tri?Math.round(p.m*3*.9):p.m;$('#pay
   $('#payC').textContent=`Pack ${p.name} · ${tri?'trimestre':'mes'}`;$('#payP').textContent=$('#payP2').textContent=pr+' €';$('#payGo').textContent=`Pagar ${pr} €`;$('#payA').hidden=false;$('#payB').hidden=true;openM('#pay');};
 $('#bkPay').onclick=()=>{$('#bkErr').textContent='';if(!bkOk())return;payD=false;payOpen(PACKS.find(x=>x.id===fPack.value));};
 $('#payTry').onclick=()=>{payD=true;payOpen(PACKS[1]||PACKS[0]);};
+$('[data-paymenu]').addEventListener('click',e=>{e.preventDefault();setTimeout(()=>$('#payTry').click(),60);});
 $('#payGo').onclick=()=>{const b=$('#payGo');if(payT){clearTimeout(payT);payT=0;b.classList.remove('filling','fok');b.textContent=b.dataset.o;return;}b.dataset.o=b.textContent;b.classList.add('filling','fok');b.textContent='Confirmando el pago…';
   payT=setTimeout(()=>{payT=0;b.classList.remove('filling','fok');b.textContent=b.dataset.o;$('#payM').textContent=payM;$('#payA').hidden=true;$('#payB').hidden=false;},1600);};
 $('#paySend').onclick=()=>{if(payD){payD=false;closeM($('#pay'));return;}bkPm=payM;closeM($('#pay'));document.body.style.overflow='hidden';$('#bkForm').requestSubmit();bkPm='';};
