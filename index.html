@@ -40,6 +40,7 @@ html[data-theme=light] .period{box-shadow:none}html[data-theme=light] .chips spa
 html[data-theme=light] .btn-linea:not(:is(.hero,.final,.band,#videos,.lb,.pm-hero) *){border-color:rgba(11,11,10,.3);background:#FFFFFF;color:#0B0B0A}html[data-theme=light] .btn-linea:not(:is(.hero,.final,.band,#videos,.lb,.pm-hero) *):hover{border-color:var(--oro);color:var(--oro-hondo)}
 html[data-theme=light] .faq{border-top:0}html[data-theme=light] .faq details{background:#FFFFFF;border:1px solid #DAD8D1;border-radius:14px;padding:0 20px;margin-bottom:8px}
 html[data-theme=light] body{background:var(--noche);color:var(--cal)}
+@media (hover:hover){:is(button,a.btn,.tab,.opt,.period,.chips span,.payrow span,.pack,.mcard,.posc,.hero-mods a):not(.btn-oro,.sal,.jpb-btn,.strip button,#gate *,.x,.menu-close):hover{border-color:var(--oro)!important;box-shadow:0 0 0 1px var(--oro)}}
 .thm.sal{color:#ff8a7a;border-color:rgba(255,138,122,.8);background:rgba(255,138,122,.1)}.thm{width:46px;height:46px;border-radius:12px;border:1px solid var(--linea);display:inline-flex;align-items:center;justify-content:center;color:var(--cal);background:transparent;cursor:pointer;flex:none;transition:transform .3s}
 .thm:hover{border-color:var(--oro);color:var(--oro)}.thm svg{width:20px;height:20px}.thm .sun{display:none}html[data-theme=light] .thm .sun{display:block}html[data-theme=light] .thm .moon{display:none}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -79,7 +80,8 @@ section{position:relative}
 .burger{display:none;width:46px;height:46px;border-radius:12px;border:1px solid var(--linea);align-items:center;justify-content:center}
 @media (max-width:980px){.nav{display:none}.burger{display:flex}}
 .thm,.burger{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 16%,transparent);color:var(--cal)}.thm svg,.burger svg{width:22px;height:22px;stroke-width:2.2}
-.menu{position:fixed;inset:0;z-index:60;background:var(--noche);display:flex;flex-direction:column;padding:96px 24px 40px;gap:6px;opacity:0;pointer-events:none;transition:opacity .25s}
+.menu::before{content:"";position:fixed;inset:-24px;z-index:-2;background:url(assets/img/jp-misters-team-cover-v4.webp) center 30%/cover;filter:blur(5px) saturate(.9);opacity:.7;pointer-events:none}.menu::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,5,5,.55) 0%,rgba(5,5,5,.78) 55%,rgba(5,5,5,.92) 100%);pointer-events:none}
+.menu{position:fixed;inset:0;z-index:60;isolation:isolate;overflow-y:auto;background:var(--noche);display:flex;flex-direction:column;padding:96px 24px 40px;gap:6px;opacity:0;pointer-events:none;transition:opacity .25s}
 .menu.open{opacity:1;pointer-events:auto}
 .menu a{font-family:var(--f-disp);font-size:clamp(24px,7vw,30px);letter-spacing:.02em;text-transform:uppercase;text-decoration:none;padding:6px 0;border-bottom:1px solid var(--linea)}
 .menu .btn{margin-top:24px;font-family:var(--f-text);font-size:16px;border:0}
@@ -512,7 +514,7 @@ html.locked #gate{display:flex}
 <form id="gateF"><input id="gateI" autocomplete="off" autocapitalize="characters" placeholder="Código" aria-label="Código de acceso"><button type="submit">Entrar</button></form>
 <div class="err" id="gateE" aria-live="polite"></div>
 <p class="sig">© 2026 <b>KREA Digital Studio</b> · Diseño y desarrollo</p></div></div>
-<script>(function(){var K=atob('SlAyMDI2');var f=document.getElementById('gateF');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('gateI').value.trim().toUpperCase();if(v===K){try{localStorage.setItem('jp-acceso','ok')}catch(x){}document.documentElement.classList.remove('locked');}else{document.getElementById('gateE').textContent='Código incorrecto. Pídelo a KREA Digital Studio.';}});})();</script>
+<script>(function(){var K=atob('SlAyMDI2');var f=document.getElementById('gateF');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('gateI').value.trim().toUpperCase();if(v===K){try{localStorage.setItem('jp-acceso','ok')}catch(x){}var b=f.querySelector('button');b.disabled=true;b.classList.add('filling','fok');b.textContent='Entrando…';setTimeout(function(){document.documentElement.classList.remove('locked');b.disabled=false;b.classList.remove('filling','fok');b.textContent='Entrar';},1200);}else{document.getElementById('gateE').textContent='Código incorrecto. Pídelo a KREA Digital Studio.';}});})();</script>
 
 
 <header class="top" id="top">

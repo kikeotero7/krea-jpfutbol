@@ -45,6 +45,7 @@ input,select,textarea{font:inherit;color:var(--cal)}
 .muted{color:var(--c3)}
 .gold{color:var(--oro)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:12px;font-weight:700;font-size:14.5px;border:1px solid var(--linea);background:var(--g2);white-space:nowrap}
+@media (hover:hover){:is(button,a.btn,.cct):not(.oro,.salir,.tabbar *,.x,[data-close],.jpa-btn):hover{border-color:var(--oro)!important;box-shadow:0 0 0 1px var(--oro)}}
 .btn.oro{background:var(--oro);border-color:var(--oro);color:#130F05}
 .btn.full{width:100%}
 .btn.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
@@ -589,7 +590,7 @@ html.locked #gate{display:flex}
 <form id="gateF"><input id="gateI" autocomplete="off" autocapitalize="characters" placeholder="Código" aria-label="Código de acceso"><button type="submit">Entrar</button></form>
 <div class="err" id="gateE" aria-live="polite"></div>
 <p class="sig">© 2026 <b>KREA Digital Studio</b> · Diseño y desarrollo</p></div></div>
-<script>(function(){var K=atob('SlAyMDI2');var f=document.getElementById('gateF');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('gateI').value.trim().toUpperCase();if(v===K){try{localStorage.setItem('jp-acceso','ok')}catch(x){}document.documentElement.classList.remove('locked');}else{document.getElementById('gateE').textContent='Código incorrecto. Pídelo a KREA Digital Studio.';}});})();</script>
+<script>(function(){var K=atob('SlAyMDI2');var f=document.getElementById('gateF');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('gateI').value.trim().toUpperCase();if(v===K){try{localStorage.setItem('jp-acceso','ok')}catch(x){}var b=f.querySelector('button');b.disabled=true;b.classList.add('filling','fok');b.textContent='Entrando…';setTimeout(function(){document.documentElement.classList.remove('locked');b.disabled=false;b.classList.remove('filling','fok');b.textContent='Entrar';},1200);}else{document.getElementById('gateE').textContent='Código incorrecto. Pídelo a KREA Digital Studio.';}});})();</script>
 
 <div id="root"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
