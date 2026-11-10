@@ -173,7 +173,8 @@ section{position:relative}
 .chips span{padding:7px 14px;border-radius:999px;background:var(--grada-2);border:1px solid var(--linea);font-size:14px;font-weight:600}
 .panel-actions{display:flex;flex-wrap:wrap;gap:10px}
 .strip{scroll-padding-inline:0;display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-top:22px;padding-bottom:10px;scrollbar-width:thin;scrollbar-color:var(--linea) transparent}
-.strip button{flex:none;width:clamp(150px,18vw,210px);aspect-ratio:1;border-radius:12px;overflow:hidden;scroll-snap-align:start;border:1px solid var(--linea)}
+.strip{container-type:inline-size}.strip button{--n:2;flex:none;width:calc((100% - (var(--n) - 1) * 12px) / var(--n));aspect-ratio:1;border-radius:12px;overflow:hidden;scroll-snap-align:start;border:1px solid var(--linea)}
+@container (min-width:520px){.strip button{--n:3}}@container (min-width:860px){.strip button{--n:4}}
 .strip img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .strip button:hover img{transform:scale(1.06)}
 @media (max-width:900px){.panel{grid-template-columns:minmax(0,1fr)}}
