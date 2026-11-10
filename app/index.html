@@ -990,6 +990,7 @@ function pgKSheet(k){const eur=L=>L.reduce((a,p)=>a+PACKS[p.pack],0),paid=S.play
   if(k==='pend')sheet(`<h2 class="disp">Pendiente</h2><p class="muted" style="margin-bottom:12px">${eur(pend)} € · ${pend.length} ${pend.length===1?'familia':'familias'} · ${mesActual()}</p><div class="pgl">${pend.map(p=>row(p,`${p.fam&&p.fam.tutor?esc(p.fam.tutor)+' · ':''}Pack ${p.pack}`)).join('')||none('No hay pagos pendientes.')}</div>`);
   if(k==='packs'){const G=Object.keys(PACKS).map(n=>[n,S.players.filter(p=>p.pack===n)]).filter(x=>x[1].length).sort((a,b)=>b[1].length-a[1].length);
     sheet(`<h2 class="disp">Packs</h2><p class="muted" style="margin-bottom:6px">${S.players.length} jugadores y jugadoras en ${G.length} ${G.length===1?'pack':'packs'}</p>${G.map(([n,L])=>`<h3 class="pgph"><span>${n}<small>${PACKS[n]} € al mes · ${PACKINFO[n].d}</small></span><i>${L.length}</i></h3><div class="pgl">${L.map(p=>row(p,`${GROUPS[p.group].name} · ${p.paid?'Pagado':'Pendiente'}`)).join('')}</div>`).join('')}`);}}
+document.addEventListener('click',e=>{if(!e.target.closest('#payDemo'))return;const p=S.players.find(x=>!x.paid)||S.players[0];if(p)payFlow(JSON.parse(JSON.stringify(p)));});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pgi]');if(b){const p=P(b.dataset.pgi);if(p)pagoSheet(p);}});
 function vPagos(){
   const paid=S.players.filter(p=>p.paid), pend=S.players.filter(p=>!p.paid);
@@ -997,7 +998,7 @@ function vPagos(){
   const cnt={};S.players.forEach(p=>cnt[p.pack]=(cnt[p.pack]||0)+1);const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||'Progreso';
   return `<div class="hd"><div><h1 class="disp">Packs y pagos</h1><p>Mes en curso</p></div></div>
   <div class="grid g3" style="margin-bottom:14px"><button class="card kpi pgk" data-act="pgK" data-k="paid"><small>Cobrado este mes</small><b>${total} €</b><span>${paid.length} packs al día</span><em>Ver detalle ›</em></button><button class="card kpi pgk" data-act="pgK" data-k="pend"><small>Pendiente</small><b class="gold">${pend.reduce((a,p)=>a+PACKS[p.pack],0)} €</b><span>${pend.length} ${pend.length===1?'familia':'familias'}</span><em>Ver detalle ›</em></button><button class="card kpi pgk" data-act="pgK" data-k="packs"><small>Pack más elegido</small><b>${top}</b><span>${cnt[top]} jugadores · ${PACKINFO[top].d}</span><em>Ver detalle ›</em></button></div>
-  ${PAYF}<p class="muted pghint">Las familias pagan desde su app. Toca un jugador o jugadora para ver su pack, sus pagos y los datos de la familia.</p>
+  ${PAYF}<button type="button" class="btn oro full" id="payDemo" style="margin:10px 0 4px">Ver el pago de una familia</button><p class="muted pghint">Las familias pagan desde su app. Toca un jugador o jugadora para ver su pack, sus pagos y los datos de la familia.</p>
   <div class="card tw"><table><thead><tr><th>Jugador</th><th>Pack</th><th>Importe</th><th>Estado</th><th></th></tr></thead><tbody>${S.players.map(p=>`<tr data-pago="${p.id}"><td><div class="pgn">${picOf(p)?`<span class="pini pph" aria-hidden="true"><img src="${picOf(p)}" alt="" loading="lazy"><i>${initials(p.name)}</i></span>`:`<span class="pini" aria-hidden="true">${initials(p.name)}</span>`}<div><b>${p.name}</b><br><small class="muted">${GROUPS[p.group].name}</small></div></div></td><td>${p.pack}${p.nextPack?`<br><small class="pill gold" style="margin-top:4px;display:inline-block">→ ${p.nextPack.pack} el ${fmtLong(p.nextPack.from).replace(/ de (\w{3})\w*/,' $1')}</small>`:''}</td><td>${PACKS[p.pack]} €</td><td><span class="pill ${p.paid?'ok':'warn'}">${p.paid?'Pagado':'Pendiente'}</span></td><td>${p.paid?'':`<button class="btn sm" data-act="remind" data-id="${p.id}">Recordar</button>`}</td></tr>`).join('')}</tbody></table></div>
   <p class="muted" style="margin-top:12px;font-size:13px">Precios de ejemplo. En la versión real, los pagos se cobran online y se actualizan solos.</p>`;
 }
@@ -1096,7 +1097,7 @@ function payFlow(p,nx){
     <div class="pbar"><i id="pbar"></i></div><small class="muted" id="pst">Esperando confirmación…</small></div>
     <button class="btn full" id="pOk" style="margin-top:14px">${bz?'Ya lo he aceptado':'Ya lo he confirmado'}</button>`);
     let done=false;const fin=()=>{if(done)return;done=true;success(pm);};
-    requestAnimationFrame(()=>{$('#pbar').style.width='100%';});
+    requestAnimationFrame(()=>{const pb=$('#pbar');if(pb)pb.style.width='100%';});
     const t=setTimeout(fin,4200);$('#pOk').onclick=()=>{clearTimeout(t);fin();};};
   const success=(pm)=>{const d=new Date();const r={n:'JP-'+d.getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000),d:d.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}),c:'Pack '+p.pack+' · '+mes,m:pm.label,a:amt};
     if(!nx)p.paid=true;p.receipts=p.receipts||[];p.receipts.unshift(r);save();render();
@@ -1242,7 +1243,7 @@ function newAviso(){let ty='info',tk=-1;
     if(MSG_API){$('#ave').textContent='';msgPost({aviso:{ty,to,by:S.me,txt}}).then(done).catch(()=>{$('#ave').textContent='No se ha podido enviar. Revisa la conexión e inténtalo de nuevo.';});return;}
     avisos().unshift({id:'a'+Date.now(),ty,to,by:S.me,d:new Date().toISOString(),txt});save();done();};}
 /* ---------- Ayuda: asistente gratuito, mensajes con los místers y contacto del club ---------- */
-const CLUB={wa:'34609712137',tel:'+34609712137',telTxt:'609 712 137',mail:'jpacademytecnificacion@gmail.com',sede:'Centro Deportivo Valdezorras · C/ Vereda de Poco Aceite, Sevilla',maps:'https://www.google.com/maps/search/?api=1&query=Centro+Deportivo+Valdezorras+Sevilla'};
+const CLUB={wa:'34609712137',tel:'+34609712137',telTxt:'609 712 137',mail:'jpacademytecnificacion@gmail.com',sede:'Centro Deportivo Valdezorras · C/ Vereda de Poco Aceite, Sevilla',maps:'https://www.google.com/maps/dir/?api=1&destination=Centro+Deportivo+Valdezorras%2C+Sevilla'};
 const waL=t=>'https://wa.me/'+CLUB.wa+'?text='+encodeURIComponent(t);
 const nz=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const tarde=()=>{const h=new Date().getHours();return h<9||h>=22;};

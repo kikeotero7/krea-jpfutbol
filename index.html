@@ -476,7 +476,7 @@ footer .krea b{color:var(--oro);font-weight:700}
 .err{color:#FF8A7A;font-size:14px;min-height:20px;margin-bottom:8px}
 .sheet .btn{width:100%}
 .payrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}.payrow small{margin-right:4px;color:var(--cal-3);font-size:13px;font-weight:700}.payrow span{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border:1px solid var(--linea);border-radius:999px;font-size:13px;font-weight:700}
-.sheet .bkpay{width:100%;margin-top:10px}.sheet .bkpay[hidden]{display:none}.paysum{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0;padding:14px;border:1px solid var(--linea);border-radius:14px}.paysum small{display:block;color:var(--cal-3);font-size:12px}.paysum .amt{flex:none;font-family:var(--f-disp);font-size:30px;color:var(--oro)}
+.paytry{margin-top:16px}#pay h3{padding-right:44px}.sheet .bkpay{width:100%;margin-top:10px}.sheet .bkpay[hidden]{display:none}.paysum{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0;padding:14px;border:1px solid var(--linea);border-radius:14px}.paysum small{display:block;color:var(--cal-3);font-size:12px}.paysum .amt{flex:none;font-family:var(--f-disp);font-size:30px;color:var(--oro)}
 #pay{z-index:82}.paym{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.paym button{min-height:64px;padding:8px;border:1px solid var(--linea);border-radius:14px;background:transparent;color:inherit;font:inherit;font-weight:800;cursor:pointer}.paym button[aria-pressed=true]{border-color:var(--oro);background:rgba(226,183,70,.12)}.paym small{display:block;color:var(--cal-3);font-size:12px;font-weight:600}#pay .btn{width:100%}
 .sheet .fine{font-size:13px;color:var(--cal-3);margin-top:12px;text-align:center}
 
@@ -561,7 +561,7 @@ html.locked #gate{display:flex}
       </div>
       <div class="hero-facts">
         <span><svg class="hf-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Lunes a jueves</b> de 20:00 a 21:30</span></span>
-        <a href="#sede" class="hf-loc"><svg class="hf-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><b>Centro Deportivo Valdezorras</b>, Sevilla</span></a>
+        <a href="https://www.google.com/maps/search/?api=1&query=Centro+Deportivo+Valdezorras%2C+Sevilla" target="_blank" rel="noopener" class="hf-loc" aria-label="Abrir el Centro Deportivo Valdezorras en Google Maps"><svg class="hf-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><b>Centro Deportivo Valdezorras</b>, Sevilla</span></a>
       </div>
     </div>
     <div class="reel" aria-hidden="true">
@@ -775,6 +775,7 @@ html.locked #gate{display:flex}
     <div class="packs" id="packList"></div>
     <p class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Precios de ejemplo pendientes de confirmar por JP Fútbol. El pago online está en demostración: todavía no se cobra nada.</p>
     <div class="payrow"><small>Formas de pago</small><span>Tarjeta</span><span>Google Pay</span><span>Apple Pay</span><span>Bizum</span></div>
+    <button class="btn btn-linea paytry" type="button" id="payTry">Probar el pago online</button>
   </div>
 </section>
 
@@ -847,9 +848,9 @@ html.locked #gate{display:flex}
           <div><dt>Lugar</dt><dd>Centro Deportivo Valdezorras, Sevilla</dd></div>
           <div><dt>Contacto</dt><dd><a href="tel:+34609712137">609 712 137</a></dd></div>
         </dl>
-        <a class="btn btn-linea" href="https://www.google.com/maps/search/?api=1&query=Centro+Deportivo+Valdezorras+Sevilla" target="_blank" rel="noopener">Cómo llegar</a>
+        <a class="btn btn-linea" href="https://www.google.com/maps/dir/?api=1&destination=Centro+Deportivo+Valdezorras%2C+Sevilla" target="_blank" rel="noopener">Cómo llegar</a>
       </div>
-      <a class="map rv" href="https://www.google.com/maps/search/?api=1&query=Centro+Deportivo+Valdezorras+Sevilla" target="_blank" rel="noopener" aria-label="Abrir el Centro Deportivo Valdezorras en Google Maps"><img loading="lazy" src="assets/img/jp-field-gold.webp" alt=""><span class="pin"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="map-in"><b>Centro Deportivo Valdezorras</b><small>Sevilla · Lunes a jueves · 20:00 a 21:30</small><span class="btn btn-oro">Abrir en Google Maps</span></span></a>
+      <a class="map rv" href="https://www.google.com/maps/search/?api=1&query=Centro+Deportivo+Valdezorras%2C+Sevilla" target="_blank" rel="noopener" aria-label="Abrir el Centro Deportivo Valdezorras en Google Maps"><img loading="lazy" src="assets/img/jp-field-gold.webp" alt=""><span class="pin"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="map-in"><b>Centro Deportivo Valdezorras</b><small>Sevilla · Lunes a jueves · 20:00 a 21:30</small><span class="btn btn-oro">Abrir en Google Maps</span></span></a>
     </div>
 
     <div class="steps">
@@ -1114,13 +1115,15 @@ $('#bkForm').onsubmit=e=>{
 /* Pago en demostración: no cobra nada */
 const paySync=()=>{$('#bkPay').hidden=!PACKS.some(p=>p.id===fPack.value);};fPack.addEventListener('change',paySync);
 document.addEventListener('click',e=>{if(e.target.closest('[data-book]'))paySync();});paySync();
-let payM='Tarjeta',payT=0;
+let payM='Tarjeta',payT=0,payD=false;
 $$('.paym button').forEach(b=>b.onclick=()=>{payM=b.dataset.pm;$$('.paym button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
-$('#bkPay').onclick=()=>{$('#bkErr').textContent='';if(!bkOk())return;const p=PACKS.find(x=>x.id===fPack.value),tri=period==='t',pr=tri?Math.round(p.m*3*.9):p.m;
+const payOpen=p=>{const tri=period==='t',pr=tri?Math.round(p.m*3*.9):p.m;$('#paySend').textContent=payD?'Cerrar':'Enviar reserva por WhatsApp';$('#payB p').textContent=payD?'Esto es una demostración: no se ha cobrado nada. Así lo verá cada familia al pagar su pack.':'Esto es una demostración: no se ha cobrado nada. Envía ahora tu reserva y el equipo te confirma grupo y horario.';
   $('#payC').textContent=`Pack ${p.name} · ${tri?'trimestre':'mes'}`;$('#payP').textContent=$('#payP2').textContent=pr+' €';$('#payGo').textContent=`Pagar ${pr} €`;$('#payA').hidden=false;$('#payB').hidden=true;openM('#pay');};
+$('#bkPay').onclick=()=>{$('#bkErr').textContent='';if(!bkOk())return;payD=false;payOpen(PACKS.find(x=>x.id===fPack.value));};
+$('#payTry').onclick=()=>{payD=true;payOpen(PACKS[1]||PACKS[0]);};
 $('#payGo').onclick=()=>{const b=$('#payGo');if(payT){clearTimeout(payT);payT=0;b.classList.remove('filling','fok');b.textContent=b.dataset.o;return;}b.dataset.o=b.textContent;b.classList.add('filling','fok');b.textContent='Confirmando el pago…';
   payT=setTimeout(()=>{payT=0;b.classList.remove('filling','fok');b.textContent=b.dataset.o;$('#payM').textContent=payM;$('#payA').hidden=true;$('#payB').hidden=false;},1600);};
-$('#paySend').onclick=()=>{bkPm=payM;closeM($('#pay'));document.body.style.overflow='hidden';$('#bkForm').requestSubmit();bkPm='';};
+$('#paySend').onclick=()=>{if(payD){payD=false;closeM($('#pay'));return;}bkPm=payM;closeM($('#pay'));document.body.style.overflow='hidden';$('#bkForm').requestSubmit();bkPm='';};
 
 /* Orientador */
 const ans={};
