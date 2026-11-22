@@ -1,0 +1,40 @@
+name: Publicar JP Fútbol en OVH
+# Al subir cambios a main, publica por FTP en el alojamiento de OVH:
+#   web -> /jpfutbolweb/      (jpfutbolweb.kreadigitalstudio.es)
+#   app -> /jpfutbolweb/app/  (jpfutbolapp.kreadigitalstudio.es)
+# Usa un usuario de FTP propio cuya carpeta de inicio es /jpfutbolweb, así que no puede tocar nada más del alojamiento.
+# No borra archivos del servidor que no haya subido él: solo borra los que publicó antes y ya no están en el repo.
+# Los datos de la app (mensajes, registro y clave del asistente) se guardan fuera de /jpfutbolweb y no se tocan.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['README.md', '.github/workflows/auditoria-seguridad.yml']
+  workflow_dispatch:
+concurrency:
+  group: publicar-ovh
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar que los scripts no tienen errores
+        run: |
+          for f in app/*.js; do node --check "$f"; done
+          for f in *.php app/*.php; do php -l "$f"; done
+      - name: Preparar solo los archivos de la web y la app
+        run: |
+          mkdir publicar
+          tar --exclude='./.git' --exclude='./.github' --exclude='./README.md' --exclude='./.nojekyll' --exclude='./publicar' -cf - . | tar -xf - -C publicar
+          ls -la publicar publicar/app
+      - name: Subir por FTP a /jpfutbolweb
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.OVH_FTP_SERVIDOR }}
+          username: ${{ secrets.OVH_FTP_USUARIO }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          local-dir: ./publicar/
+          server-dir: ./
+          dangerous-clean-slate: false

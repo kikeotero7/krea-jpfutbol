@@ -4,6 +4,9 @@ name: Auditoría de seguridad KREA
 # El informe sale en la pestaña Actions. No cambia nada de la app.
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Publicar JP Fútbol en OVH']
+    types: [completed]
   schedule:
     - cron: '17 6 * * 1'   # lunes por la mañana
 permissions:
