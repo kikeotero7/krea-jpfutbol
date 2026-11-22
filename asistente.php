@@ -12,7 +12,7 @@ function salir($datos, $codigo = 200) { http_response_code($codigo); echo json_e
 
 /* Solo se acepta desde las webs de JP Fútbol (y en pruebas locales) */
 $origen = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origen !== '' && !preg_match('#^https://(jpfutbolweb|jpfutbolapp|jpfutbol-web|jpfutbol-app)\.kreadigitalstudio\.es$|^http://localhost(:\d+)?$#', $origen)) salir(['ok' => false, 'error' => 'origen'], 403);
+if ($origen !== '' && !preg_match('#^https://(jpfutbolweb|jpfutbolapp|jpfutbol-web|jpfutbol-app)\.(kreavance|kreadigitalstudio)\.es$|^http://localhost(:\d+)?$#', $origen)) salir(['ok' => false, 'error' => 'origen'], 403);
 if ($origen !== '') { header('Access-Control-Allow-Origin: ' . $origen); header('Vary: Origin'); }
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { header('Access-Control-Allow-Methods: POST'); header('Access-Control-Allow-Headers: Content-Type'); header('Access-Control-Max-Age: 86400'); http_response_code(204); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') salir(['ok' => false, 'error' => 'metodo'], 405);

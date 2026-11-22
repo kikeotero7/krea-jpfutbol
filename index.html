@@ -286,7 +286,7 @@ html[data-theme=light] .deco-pitch::before{opacity:.20}html[data-theme=light] .d
 /* Sección de la app con capturas reales */
 /* Información legal */
 #lg{z-index:85}.lgsheet{width:min(720px,100%)}.lgsheet h3{font-size:24px;margin-bottom:10px}
-.lgnav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:6px;position:sticky;top:-34px;padding:8px 0;background:var(--grada);z-index:1}.lgnav button{background:none;border:0;padding:4px 0;color:var(--oro);font-weight:700;font-size:14px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.lgv{font-size:12.5px;opacity:.7;margin:-6px 0 10px}.lgnav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:6px;position:sticky;top:-34px;padding:8px 0;background:var(--grada);z-index:1}.lgnav button{background:none;border:0;padding:4px 0;color:var(--oro);font-weight:700;font-size:14px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .lgsheet section{margin-top:18px;scroll-margin-top:50px}.lgsheet h4{font-size:17px;margin-bottom:8px}.lgsheet p{font-size:14.5px;line-height:1.6;margin:0 0 9px;color:var(--cal-2,#C9C4B6)}.lgsheet p b{color:var(--cal)}
 .lgpie{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:20px!important;font-size:13px!important;text-align:center}.lgpie a{color:inherit;text-decoration:none}.lgpie a b{color:var(--oro)}
 .flegal{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}.flegal a{color:inherit;font-size:13.5px;text-decoration:underline;text-underline-offset:3px}.flegal a:hover{color:var(--cal)}
@@ -835,7 +835,7 @@ html.locked #gate{display:flex}
         <p><b>iPhone:</b> ábrela en Safari, pulsa Compartir y elige «Añadir a pantalla de inicio».</p>
         <p class="muted">El acceso para cada familia lo da el club al apuntarse.</p>
       </div>
-      <div class="qrs"><a href="https://jpfutbolapp.kreadigitalstudio.es"><img src="assets/img/qr-app.png" alt="Código QR para abrir la app de JP Fútbol" width="150" height="150" loading="lazy">Abrir la app</a><a href="https://jpfutbolweb.kreadigitalstudio.es"><img src="assets/img/qr-web.png" alt="Código QR para abrir la web de JP Fútbol" width="150" height="150" loading="lazy">Abrir la web</a></div>
+      <div class="qrs"><a href="https://jpfutbolapp.kreavance.es"><img src="assets/img/qr-app.png?v=2" alt="Código QR para abrir la app de JP Fútbol" width="150" height="150" loading="lazy">Abrir la app</a><a href="https://jpfutbolweb.kreavance.es"><img src="assets/img/qr-web.png?v=2" alt="Código QR para abrir la web de JP Fútbol" width="150" height="150" loading="lazy">Abrir la web</a></div>
     </div>
     <div class="phones rv">
       <figure class="ph2 ph-back"><img src="assets/img/app-ficha.jpg" alt="Ficha de un jugador en la app: foto, nota global y evaluación por áreas" loading="lazy" width="750" height="1624"></figure>
@@ -921,6 +921,7 @@ html.locked #gate{display:flex}
   <div class="sheet lgsheet">
     <button type="button" class="x" data-close aria-label="Cerrar"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <h3 id="lgT">Información legal</h3>
+    <p class="lgv">Versión 1.0 · 22 de noviembre de 2026</p>
     <nav class="lgnav" aria-label="Información legal"><button type="button" data-legal="aviso">Aviso legal</button><button type="button" data-legal="privacidad">Privacidad</button><button type="button" data-legal="condiciones">Condiciones de uso</button><button type="button" data-legal="cookies">Cookies</button></nav>
     <section id="lg-aviso"><h4>Aviso legal</h4>
       <p><b>Titular de la web:</b> JP Fútbol · [NOMBRE FISCAL DE JP FÚTBOL] · [NIF DE JP FÚTBOL] · [DIRECCIÓN FISCAL DE JP FÚTBOL] · jpacademytecnificacion@gmail.com · 609 712 137.</p>
@@ -929,16 +930,17 @@ html.locked #gate{display:flex}
     <section id="lg-privacidad"><h4>Política de privacidad</h4>
       <p><b>Responsable:</b> JP Fútbol ([NOMBRE FISCAL DE JP FÚTBOL], [NIF DE JP FÚTBOL]), jpacademytecnificacion@gmail.com.</p>
       <p><b>Reservas:</b> el formulario de reserva no guarda nada en la web. Al enviarlo se abre WhatsApp con el mensaje escrito (nombre, edad y posición del jugador o jugadora, nombre de la madre, padre o tutor, pack y días) y eres tú quien decide enviarlo. Usamos esos datos solo para responder y organizar la plaza.</p>
-      <p><b>Asistente:</b> responde al momento con las respuestas preparadas por JP Fútbol, en tu propio navegador. Lo que escribes no se envía a ningún servicio externo ni se guarda. Si no tiene la respuesta, te ofrece hablar con el equipo por WhatsApp. No escribas datos sensibles ni de salud.</p>
-      <p><b>Menores:</b> los datos de jugadores y jugadoras menores de 14 años nos los debe facilitar su madre, padre o tutor.</p>
-      <p><b>Quién nos ayuda:</b> OVHcloud (alojamiento de la web, Francia), WhatsApp (mensajería, si decides enviarnos la reserva) y Anthropic (asistente con IA).</p>
+      <p><b>Asistente:</b> no usa inteligencia artificial. Responde al momento con las respuestas preparadas por JP Fútbol, en tu propio navegador. Lo que escribes no se envía a ningún servicio externo ni se guarda. Si no tiene la respuesta, te ofrece hablar con el equipo por WhatsApp. No escribas datos sensibles ni de salud.</p>
+      <p><b>Menores:</b> los datos de jugadores y jugadoras menores de 14 años nos los debe facilitar su madre, padre o tutor. No envíes datos de salud por la web.</p>
+      <p><b>Quién nos ayuda:</b> KREAVANCE (diseño y mantenimiento de la web, como encargado del tratamiento), OVHcloud (alojamiento de la web, Francia) y WhatsApp (mensajería, solo si decides enviarnos la reserva).</p>
+      <p><b>Cuánto tiempo:</b> los datos de una reserva se guardan mientras dure la inscripción; si no llega a hacerse, se borran en 3 meses.</p>
       <p><b>Tus derechos:</b> acceder, corregir, borrar, oponerte, limitar o llevarte tus datos escribiendo a jpacademytecnificacion@gmail.com. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p></section>
     <section id="lg-condiciones"><h4>Condiciones de uso</h4>
       <p>La información de la web es orientativa: los precios, horarios y grupos los confirma el equipo de JP Fútbol al reservar.</p>
-      <p>El asistente responde de forma automática y con inteligencia artificial, y <b>puede equivocarse</b>. Para cualquier caso concreto, la última palabra es del equipo de JP Fútbol.</p>
+      <p>El asistente responde de forma automática, con respuestas preparadas por JP Fútbol y sin inteligencia artificial, y <b>puede no tener la respuesta exacta</b>. Para cualquier caso concreto, la última palabra es del equipo de JP Fútbol.</p>
       <p>JP Fútbol se reserva el <b>derecho de admisión</b>. Estas condiciones se rigen por la ley española.</p></section>
     <section id="lg-cookies"><h4>Cookies</h4>
-      <p>La web no usa cookies de publicidad ni de seguimiento. Solo guarda en tu navegador lo imprescindible para funcionar: el modo claro u oscuro y el acceso a la presentación. Por eso no necesita tu consentimiento.</p></section>
+      <p>La web solo usa almacenamiento técnico: no usa cookies de publicidad, de analítica ni de seguimiento. Solo guarda en tu navegador lo imprescindible para funcionar: el modo claro u oscuro y el acceso a la presentación. Por eso no necesita tu consentimiento.</p></section>
     <p class="lgpie"><b>JP Fútbol 2026</b><span>© <a href="https://kreavance.es" target="_blank" rel="noopener"><b>KREAVANCE</b></a> · Diseño y desarrollo</span></p>
   </div>
 </div>
@@ -992,7 +994,7 @@ html.locked #gate{display:flex}
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const WA='34609712137';
-const APP_URL=/kreadigitalstudio.es$/.test(location.hostname)?'https://jpfutbolapp.kreadigitalstudio.es/':'app/index.html';
+const APP_URL=/(kreavance|kreadigitalstudio)\.es$/.test(location.hostname)?'https://jpfutbolapp.kreavance.es/':'app/index.html';
 $('#appLink').href=APP_URL;
 (function(){const b=document.getElementById('appHow'),x=document.getElementById('appHowBox');if(b)b.onclick=()=>{x.hidden=!x.hidden;b.setAttribute('aria-expanded',!x.hidden);};})();
 

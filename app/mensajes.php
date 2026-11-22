@@ -14,7 +14,9 @@ function salir($datos, $codigo = 200) { http_response_code($codigo); echo json_e
 function respuesta($m, $a) { return ['ok' => true, 'msgs' => (object) $m, 'avisos' => array_values($a)]; }
 
 $origen = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origen !== '' && !preg_match('#^https://(jpfutbolapp|jpfutbol-app)\.kreadigitalstudio\.es$#', $origen)) salir(['ok' => false, 'error' => 'origen'], 403);
+/* Solo desde la app de JP Fútbol: sin la cabecera Origin de la app no se lee ni se escribe nada.
+   (Protección básica de la versión de presentación; con cuentas reales, cada petición irá con sesión y permisos.) */
+if (!preg_match('#^https://(jpfutbolapp|jpfutbol-app)\.(kreavance|kreadigitalstudio)\.es$#', $origen)) salir(['ok' => false, 'error' => 'origen'], 403);
 
 $post = $_SERVER['REQUEST_METHOD'] === 'POST';
 
