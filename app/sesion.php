@@ -38,22 +38,25 @@ $post = $_SERVER['REQUEST_METHOD'] === 'POST';
 if ($post && !preg_match('#^https://(jpfutbolapp|jpfutbol-app)\.(kreavance|kreadigitalstudio)\.es$#', $origen)) jp_salir(['ok' => false, 'error' => 'origen'], 403);
 if (!$post) jp_salir(['ok' => jp_sesion_valida()]);
 
-/* Límite de intentos fallidos: 8 por IP cada 15 minutos */
-$marca = sys_get_temp_dir() . '/jpfutbol-ses-' . substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . 'jpses'), 0, 24);
-$ahora = time(); $fallos = [];
-if (is_readable($marca)) $fallos = array_filter(array_map('intval', explode(',', (string) file_get_contents($marca))), function ($t) use ($ahora) { return $t > $ahora - 900; });
-if (count($fallos) >= 8) jp_salir(['ok' => false, 'error' => 'limite'], 429);
+/* Límite de intentos: 8 por IP cada 15 minutos. Se lee, se comprueba y se apunta el intento con el archivo bloqueado,
+   antes de mirar el código, para que muchas peticiones a la vez no puedan saltarse el límite. Si acierta, se borra. */
+$ahora = time();
+$fp = @fopen(sys_get_temp_dir() . '/jpfutbol-ses-' . substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . 'jpses'), 0, 24), 'c+');
+if (!$fp) jp_salir(['ok' => false, 'error' => 'almacen'], 500);
+flock($fp, LOCK_EX);
+$fallos = array_values(array_filter(array_map('intval', explode(',', (string) stream_get_contents($fp))), function ($t) use ($ahora) { return $t > $ahora - 900; }));
+$bloqueado = count($fallos) >= 8;
+if (!$bloqueado) $fallos[] = $ahora;
+ftruncate($fp, 0); rewind($fp); fwrite($fp, implode(',', $fallos)); fflush($fp);
+flock($fp, LOCK_UN);
+if ($bloqueado) { fclose($fp); jp_salir(['ok' => false, 'error' => 'limite'], 429); }
 
 $e = json_decode((string) file_get_contents('php://input'), true);
 $codigo = is_array($e) ? strtoupper(trim(substr((string) ($e['codigo'] ?? ''), 0, 40))) : '';
-if (!hash_equals(JP_CODIGO_SHA, hash('sha256', $codigo))) {
-  $fallos[] = $ahora; @file_put_contents($marca, implode(',', $fallos));
-  usleep(400000);
-  jp_salir(['ok' => false, 'error' => 'codigo'], 401);
-}
+if (!hash_equals(JP_CODIGO_SHA, hash('sha256', $codigo))) { fclose($fp); usleep(400000); jp_salir(['ok' => false, 'error' => 'codigo'], 401); }
+flock($fp, LOCK_EX); ftruncate($fp, 0); fflush($fp); flock($fp, LOCK_UN); fclose($fp);
 $k = jp_clave();
 if ($k === '') jp_salir(['ok' => false, 'error' => 'almacen'], 500);
 $exp = (string) ($ahora + JP_DIAS * 86400);
 setcookie(JP_COOKIE, $exp . '.' . jp_firma($exp, $k), ['expires' => (int) $exp, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
-@unlink($marca);
 jp_salir(['ok' => true]);
