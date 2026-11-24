@@ -10,7 +10,7 @@
    Seguridad (24-11-2026, auditoría KREA «las 5 puertas»): borrarlo todo exige el código del club, guardado
    fuera de la carpeta pública en ../../jpfutbol-mensajes-codigo.txt (una línea); si no existe, vale el código
    del club elegido por Kike, guardado aquí solo como huella bcrypt. 5 códigos mal por IP = 1 hora bloqueado. Antes de usar la app con familias reales, leer y escribir
-   también tendrán que ir con inicio de sesión (hoy basta con la cabecera Origin, que se puede falsificar). */
+   llevarán además cuentas por familia; desde el 24-11 todas las acciones exigen la sesión de sesion.php. */
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
