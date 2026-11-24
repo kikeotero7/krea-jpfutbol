@@ -903,8 +903,8 @@ function sesSheet(k,day){const g=GROUPS[k],m=metaFor(k,day),pl=convOf(k,day),key
     fillGo(b,'del','Borrando…',()=>{if(S.plans)delete S.plans[key];if(S.meta)delete S.meta[key];save();closeSheet();render();toast(habitual?'Planificación borrada: vuelve el plan habitual':'Sesión borrada');});};}
 /* Botón que se rellena poco a poco antes de confirmar: verde para confirmar, rojo para borrar. Tocar otra vez lo cancela. */
 function fillGo(b,kind,txt,fn,ms){if(b.classList.contains('filled'))return;
-  if(b.dataset.fill){clearTimeout(+b.dataset.fill);delete b.dataset.fill;b.classList.remove('filling','fok','fdel');b.innerHTML=b.dataset.orig;toast('Cancelado');return;}
-  b.dataset.orig=b.innerHTML;b.style.setProperty('--fd',(ms||1200)+'ms');b.classList.add('filling',kind==='del'?'fdel':'fok');b.innerHTML=`${I(kind==='del'?'x':'check',16)}<span>${txt}</span>`;toast('Toca otra vez para cancelar');
+  if(b.dataset.fill){clearTimeout(+b.dataset.fill);delete b.dataset.fill;b.classList.remove('filling','fok','fdel');b.innerHTML=b.dataset.orig;if(b.dataset.al!=null){b.setAttribute('aria-label',b.dataset.al);delete b.dataset.al;}toast('Cancelado');return;}
+  b.dataset.orig=b.innerHTML;b.style.setProperty('--fd',(ms||1200)+'ms');const solo=!b.textContent.trim();b.classList.add('filling',kind==='del'?'fdel':'fok');b.innerHTML=solo?I(kind==='del'?'x':'check',18):`${I(kind==='del'?'x':'check',16)}<span>${txt}</span>`;if(solo){b.dataset.al=b.getAttribute('aria-label')||'';b.setAttribute('aria-label',txt);}toast('Toca otra vez para cancelar');
   b.dataset.fill=setTimeout(()=>{delete b.dataset.fill;b.classList.add('filled');fn(b);},ms||1200);}
 /* Vista de jugadores, jugadoras y familias: el míster ve la app como la familia y vuelve con un botón */
 function famSheet(){sheet(`<h2 class="disp">Vista de jugadores, jugadoras y familias</h2><p class="muted" style="margin-bottom:12px">Elige un jugador o jugadora para ver su app, la misma que usa su familia.</p><div class="pgl">${S.players.map(p=>`<button type="button" class="pgi" data-fv="${p.id}">${picOf(p)?`<span class="pini pph" aria-hidden="true"><img src="${picOf(p)}" alt="" loading="lazy"><i>${initials(p.name)}</i></span>`:`<span class="pini" aria-hidden="true">${initials(p.name)}</span>`}<span class="grow"><b>${p.name}</b><small>${GROUPS[p.group].name}</small></span></button>`).join('')}</div>`);}
@@ -971,9 +971,9 @@ function rpeKSheet(k){const A=rpeAll(),D=rpeDates(6).slice().reverse(),MIN=90,no
     <section class="card ksec"><h3>Faltan por responder <small class="h3sub">Últimos 7 días</small></h3>${miss.length?`<div class="pgl">${miss.map(x=>`<button type="button" class="pgi" data-open="${x.p.id}"><span class="grow"><b>${x.p.name}</b><small>${x.n} ${x.n>1?'entrenos':'entreno'} sin marcar</small></span></button>`).join('')}</div><button class="btn full" style="margin-top:10px" data-act="ciRemind" data-n="${miss.length}">Recordar a todos</button>`:'<p class="muted">Han respondido todos. 👏</p>'}</section>`;}
   sheet(h);}
 /* Regla de toda la app: guardar se llena de verde y borrar de rojo antes de confirmarse */
-function fillOff(b){if(!b.isConnected)return;b.classList.remove('filling','fok','fdel','filled');if(b.dataset.orig)b.innerHTML=b.dataset.orig;}
-const FILLF={pf:'Creando…',avf:'Enviando aviso…',pwf:'Guardando…',famf:'Guardando…',misf:'Guardando…',msf:'Guardando…',evf:'Guardando…',tf:'Guardando…',nf:'Guardando…',sf:'Guardando…'};
-document.addEventListener('submit',e=>{const f=e.target,tx=FILLF[f.id];if(!tx)return;if(f._fg){f._fg=0;return;}const b=f.querySelector('button[type=submit],button:not([type])');if(!b)return;
+function fillOff(b){if(!b.isConnected)return;b.classList.remove('filling','fok','fdel','filled');if(b.dataset.orig)b.innerHTML=b.dataset.orig;if(b.dataset.al!=null){b.setAttribute('aria-label',b.dataset.al);delete b.dataset.al;}}
+const FILLF={pf:'Creando…',avf:'Enviando aviso…',pwf:'Guardando…',famf:'Guardando…',misf:'Guardando…',msf:'Guardando…',evf:'Guardando…',tf:'Guardando…',nf:'Guardando…',sf:'Guardando…',hm:'Enviando…'};
+document.addEventListener('submit',e=>{const f=e.target,tx=FILLF[f.id];if(!tx)return;if(f._fg){f._fg=0;return;}if(f.id==='hm'&&!($('#hmi')&&$('#hmi').value.trim()))return;const b=f.querySelector('button[type=submit],button:not([type])');if(!b)return;
   e.preventDefault();e.stopImmediatePropagation();fillGo(b,'ok',tx,()=>{f._fg=1;f.requestSubmit();fillOff(b);});},true);
 /* Alta completa de un jugador o jugadora (Jugadores › Nuevo jugador/a) */
 const POSICIONES=['Por definir','Portería','Defensa','Centrocampo','Delantera'];
@@ -1594,7 +1594,7 @@ function hAsk(q,typed){HLOG.push({me:true,html:esc(q)});if(!typed||!AI_ON){HLOG.
   aiAsk().then(x=>Object.assign(r,x)).catch(()=>Object.assign(r,hAnswer(q))).finally(()=>{delete r.wait;const i=$('#hq'),k=i?{v:i.value,f:document.activeElement===i}:null;drawHelp();const n=$('#hq');if(n&&k){n.value=k.v;if(k.f)n.focus();}});}
 function hSend(t){t=String(t||'').trim();if(!t)return;const fam=S.role==='familia',id=fam?S.kid:HCV;if(!id)return;const m={f:fam?'fam':'mis',by:fam?'':S.me,t,at:new Date().toISOString(),r:false},ok=fam?'Mensaje enviado al míster':'Respuesta enviada a la familia';
   if(MSG_API){const i=$('#hmi');if(i)i.value='';msgPost({pid:id,...m}).then(()=>{drawHelp();toast(ok);}).catch(()=>{if(i&&!i.value)i.value=t;toast('No se ha podido enviar. Revisa la conexión e inténtalo de nuevo.');});return;}
-  (msgs()[id]=msgs()[id]||[]).push(m);save();drawHelp();$('#hmi').focus();toast(ok);}
+  (msgs()[id]=msgs()[id]||[]).push(m);save();if($('#hmi'))$('#hmi').value='';drawHelp();if($('#hmi')){$('#hmi').value='';$('#hmi').focus();}toast(ok);}
 function helpClick(e){const tb=e.target.closest('[data-ht]');if(tb){helpSheet(tb.dataset.ht);return;}
   const q=e.target.closest('[data-hq]');if(q){hAsk(q.dataset.hq);return;}
   const qr=e.target.closest('[data-qr]');if(qr){hSend(qr.dataset.qr);return;}
