@@ -5,7 +5,12 @@
    POST {pid, f, by, t}            → nuevo mensaje (f: fam = familia, mis = míster)
    POST {pid, read: 'mis'}         → la familia ha leído los mensajes del míster (o 'fam' al revés)
    POST {aviso: {ty, to, by, txt}} → nuevo aviso del club
-   POST {reset: true}              → vacía los mensajes y avisos de prueba */
+   POST {reset: true, codigo}      → vacía los mensajes y avisos de prueba (solo con el código del club)
+
+   Seguridad (24-11-2026, auditoría KREA «las 5 puertas»): borrarlo todo exige el código del club, guardado
+   fuera de la carpeta pública en ../../jpfutbol-mensajes-codigo.txt (una línea). Sin ese archivo no se puede
+   borrar. 5 códigos mal por IP = 1 hora bloqueado. Antes de usar la app con familias reales, leer y escribir
+   también tendrán que ir con inicio de sesión (hoy basta con la cabecera Origin, que se puede falsificar). */
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -44,7 +49,17 @@ $id = is_array($e) ? (string) ($e['pid'] ?? '') : '';
 $limpio = function ($s, $n) { return trim(mb_substr((string) $s, 0, $n)); };
 $error = '';
 if (!is_array($e)) $error = 'datos';
-elseif (!empty($e['reset'])) { $datos = []; $avisos = []; }
+elseif (!empty($e['reset'])) {
+  $bloqueo = sys_get_temp_dir() . '/jpfutbol-reset-' . substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . 'jpreset'), 0, 24);
+  $ahora = time(); $fallos = [];
+  if (is_readable($bloqueo)) $fallos = array_filter(array_map('intval', explode(',', (string) file_get_contents($bloqueo))), function ($t) use ($ahora) { return $t > $ahora - 3600; });
+  $archivoCodigo = dirname(__DIR__, 2) . '/jpfutbol-mensajes-codigo.txt';
+  $codigo = is_readable($archivoCodigo) ? trim((string) file_get_contents($archivoCodigo)) : '';
+  if (count($fallos) >= 5) $error = 'bloqueado';
+  elseif ($codigo === '') $error = 'sin_codigo';
+  elseif (!is_string($e['codigo'] ?? null) || !hash_equals($codigo, trim($e['codigo']))) { $error = 'codigo'; $fallos[] = $ahora; @file_put_contents($bloqueo, implode(',', $fallos)); }
+  else { $datos = []; $avisos = []; }
+}
 elseif (isset($e['aviso']) && is_array($e['aviso'])) {
   $a = $e['aviso'];
   $texto = $limpio($a['txt'] ?? '', 400);
@@ -71,5 +86,5 @@ elseif (isset($e['read'])) {
 }
 if ($error === '') { ftruncate($fp, 0); rewind($fp); fwrite($fp, json_encode(['m' => (object) $datos, 'a' => array_values($avisos)], JSON_UNESCAPED_UNICODE)); fflush($fp); }
 flock($fp, LOCK_UN); fclose($fp);
-if ($error !== '') salir(['ok' => false, 'error' => $error], 400);
+if ($error !== '') salir(['ok' => false, 'error' => $error], in_array($error, ['codigo', 'sin_codigo', 'bloqueado'], true) ? 403 : 400);
 salir(respuesta($datos, $avisos));

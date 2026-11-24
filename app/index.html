@@ -1288,7 +1288,11 @@ const TARDE='Ahora es tarde: Perotti y Miguel lo verán a primera hora.';
 /* En la web publicada los mensajes van por el servidor (mensajes.php) y llegan de un móvil a otro; en local se quedan en el navegador */
 const MSG_API=/(kreavance|kreadigitalstudio)\.es$/.test(location.hostname)?'mensajes.php':null;
 let MSY=0,MSOK=false;
-function msgPost(body){return fetch(MSG_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(!j||!j.ok)throw 0;msgSet(j);return j;});}
+function msgPost(body){return fetch(MSG_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(!j||!j.ok)throw (j&&j.error)||0;msgSet(j);return j;});}
+/* Borrar todos los mensajes y avisos: solo con el código del club (lo comprueba el servidor) */
+function msgWipe(done){sheet(`<h3>Borrar mensajes y avisos</h3><p class="hnote">Se borran para todas las familias y místers. Escribe el código del club para confirmarlo.</p><form id="wipef"><input type="password" id="wipec" autocomplete="off" placeholder="Código del club" aria-label="Código del club" required style="width:100%;margin:12px 0;min-height:48px;border-radius:12px;border:1px solid var(--linea);background:var(--noche);color:inherit;padding:0 14px;font-size:16px"><button class="btn full" id="wipeb">Borrar todo</button></form>`);
+ const f=$('#wipef');setTimeout(()=>$('#wipec').focus(),60);
+ f.onsubmit=ev=>{ev.preventDefault();const b=$('#wipeb');fillGo(b,'del','Borrando…',()=>msgPost({reset:true,codigo:$('#wipec').value}).then(()=>{closeSheet();toast('Mensajes y avisos de prueba borrados');if(done)done();}).catch(er=>{b.classList.remove('filled','filling','fdel');b.innerHTML=b.dataset.orig;toast(er==='codigo'?'El código no es correcto':er==='bloqueado'?'Demasiados intentos. Espera una hora.':er==='sin_codigo'?'Falta poner el código del club en el servidor':'No se han podido borrar. Revisa la conexión.');}));};}
 const chatOpen=()=>!!($('#help')&&$('#sheet').classList.contains('open')&&HT==='chat');
 function msgSet(j){const old=S.msgs||{},oldAv=S.avSrv||[],first=!MSOK,a=JSON.stringify(old)+JSON.stringify(oldAv);S.msgs=j.msgs||{};S.avSrv=j.avisos||[];MSOK=true;
   if(JSON.stringify(S.msgs)+JSON.stringify(S.avSrv)!==a){save();if(!first)ntNew(old,oldAv);msgBadges();if(chatOpen())drawHelp(true);}}
@@ -1428,7 +1432,7 @@ function ajClick(e){const c=S.cfg=S.cfg||{},s=e.target.closest('[data-sw]');
   if(a==='cons')consSheet(p);
   if(a==='dl'){dlDatos(p);toast('Archivo descargado');}
   if(a==='demo'){fillGo(b,'del','Cargando datos de ejemplo…',()=>{const keep={auth:S.auth,prof:S.prof,cfg:S.cfg};localStorage.removeItem(KEY);load();Object.assign(S,keep,{role:null});save();closeSheet();location.hash='';render();toast('Datos de ejemplo cargados de nuevo');});}
-  if(a==='wipe'){fillGo(b,'del','Borrando mensajes y avisos…',()=>msgPost({reset:true}).then(()=>toast('Mensajes y avisos de prueba borrados')).catch(()=>toast('No se han podido borrar. Revisa la conexión.')));}
+  if(a==='wipe'){msgWipe();}
   if(a==='logout'){closeSheet();S.role=null;delete S.peek;save();location.hash='';render();}}
 /* Recordatorio para pasar lista: una vez, a las 20:00 de los días de entrenamiento */
 setInterval(()=>{if(S.role!=='mister'||!(S.cfg&&S.cfg.ntLista)||!isTrainDay())return;const n=new Date(),k=n.toDateString();if(n.getHours()!==20||n.getMinutes()>15||S.cfg.listaDia===k)return;S.cfg.listaDia=k;save();
@@ -1593,7 +1597,7 @@ function helpClick(e){const tb=e.target.closest('[data-ht]');if(tb){helpSheet(tb
   const q=e.target.closest('[data-hq]');if(q){hAsk(q.dataset.hq);return;}
   const qr=e.target.closest('[data-qr]');if(qr){hSend(qr.dataset.qr);return;}
   const cv=e.target.closest('[data-cv]');if(cv){HCV=cv.dataset.cv||null;drawHelp();return;}
-  const rs=e.target.closest('[data-hreset]');if(rs){fillGo(rs,'del','Borrando…',()=>msgPost({reset:true}).then(()=>{drawHelp();toast('Mensajes de prueba borrados');}).catch(()=>toast('No se han podido borrar')));return;}
+  const rs=e.target.closest('[data-hreset]');if(rs){msgWipe(()=>drawHelp());return;}
   const b=e.target.closest('[data-hb]');if(!b)return;const [k,v]=b.dataset.hb.split('|');
   if(k==='go'){closeSheet();location.hash='#/'+v;return;}
   if(k==='tab'){helpSheet(v);return;}
