@@ -23,6 +23,12 @@ $origen = $_SERVER['HTTP_ORIGIN'] ?? '';
    (Protección básica de la versión de presentación; con cuentas reales, cada petición irá con sesión y permisos.) */
 if (!preg_match('#^https://(jpfutbolapp|jpfutbol-app)\.(kreavance|kreadigitalstudio)\.es$#', $origen)) salir(['ok' => false, 'error' => 'origen'], 403);
 
+/* Sesión obligatoria en todas las acciones (leer, escribir, marcar leído, avisos y borrar):
+   la da sesion.php al comprobar el código de acceso en el servidor. Sin sesión → 401. */
+define('JP_SESION_LIB', true);
+require __DIR__ . '/sesion.php';
+if (!jp_sesion_valida()) salir(['ok' => false, 'error' => 'sesion'], 401);
+
 /* Huella del código del club para «borrar todo» (24-11-2026). Para cambiar el código: crear el archivo de fuera o pedir otra huella. */
 const JP_RESET_HUELLA = '$2y$12$G6hl2Ix.mY1m0OSrEgQ/6.SQNXP1Enki6LWaLJ6YAlFDr1VnxaXKi';
 
