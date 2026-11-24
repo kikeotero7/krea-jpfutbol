@@ -8,8 +8,8 @@
    POST {reset: true, codigo}      → vacía los mensajes y avisos de prueba (solo con el código del club)
 
    Seguridad (24-11-2026, auditoría KREA «las 5 puertas»): borrarlo todo exige el código del club, guardado
-   fuera de la carpeta pública en ../../jpfutbol-mensajes-codigo.txt (una línea). Sin ese archivo no se puede
-   borrar. 5 códigos mal por IP = 1 hora bloqueado. Antes de usar la app con familias reales, leer y escribir
+   fuera de la carpeta pública en ../../jpfutbol-mensajes-codigo.txt (una línea); si no existe, vale el código
+   del club elegido por Kike, guardado aquí solo como huella bcrypt. 5 códigos mal por IP = 1 hora bloqueado. Antes de usar la app con familias reales, leer y escribir
    también tendrán que ir con inicio de sesión (hoy basta con la cabecera Origin, que se puede falsificar). */
 
 header('Content-Type: application/json; charset=utf-8');
@@ -22,6 +22,9 @@ $origen = $_SERVER['HTTP_ORIGIN'] ?? '';
 /* Solo desde la app de JP Fútbol: sin la cabecera Origin de la app no se lee ni se escribe nada.
    (Protección básica de la versión de presentación; con cuentas reales, cada petición irá con sesión y permisos.) */
 if (!preg_match('#^https://(jpfutbolapp|jpfutbol-app)\.(kreavance|kreadigitalstudio)\.es$#', $origen)) salir(['ok' => false, 'error' => 'origen'], 403);
+
+/* Huella del código del club para «borrar todo» (24-11-2026). Para cambiar el código: crear el archivo de fuera o pedir otra huella. */
+const JP_RESET_HUELLA = '$2y$12$G6hl2Ix.mY1m0OSrEgQ/6.SQNXP1Enki6LWaLJ6YAlFDr1VnxaXKi';
 
 $post = $_SERVER['REQUEST_METHOD'] === 'POST';
 
@@ -55,9 +58,11 @@ elseif (!empty($e['reset'])) {
   if (is_readable($bloqueo)) $fallos = array_filter(array_map('intval', explode(',', (string) file_get_contents($bloqueo))), function ($t) use ($ahora) { return $t > $ahora - 3600; });
   $archivoCodigo = dirname(__DIR__, 2) . '/jpfutbol-mensajes-codigo.txt';
   $codigo = is_readable($archivoCodigo) ? trim((string) file_get_contents($archivoCodigo)) : '';
+  $escrito = is_string($e['codigo'] ?? null) ? strtoupper(trim($e['codigo'])) : '';
+  // Si no hay archivo, vale el código del club elegido por Kike, guardado solo como huella (bcrypt): el código no está en el repositorio.
+  $valido = $escrito !== '' && ($codigo !== '' ? hash_equals(strtoupper($codigo), $escrito) : password_verify($escrito, JP_RESET_HUELLA));
   if (count($fallos) >= 5) $error = 'bloqueado';
-  elseif ($codigo === '') $error = 'sin_codigo';
-  elseif (!is_string($e['codigo'] ?? null) || !hash_equals($codigo, trim($e['codigo']))) { $error = 'codigo'; $fallos[] = $ahora; @file_put_contents($bloqueo, implode(',', $fallos)); }
+  elseif (!$valido) { $error = 'codigo'; $fallos[] = $ahora; @file_put_contents($bloqueo, implode(',', $fallos)); }
   else { $datos = []; $avisos = []; }
 }
 elseif (isset($e['aviso']) && is_array($e['aviso'])) {
